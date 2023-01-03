@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id        String    @id @default(uuid())
+  username  String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Collaborators {
+  id          String        @id @default(uuid())
+  name        String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+  TimeTracker TimeTracker[]
+}
+
+model TimeTracker {
+  id             String         @id @default(uuid())
+  startDate      DateTime
+  endDate        DateTime
+  timeZoneId     String
+  taskId         String
+  task           Tasks          @relation(fields: [taskId], references: [id])
+  collaboratorId String?
+  collaborator   Collaborators? @relation(fields: [collaboratorId], references: [id])
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  deletedAt      DateTime?
+}
+
+model Tasks {
+  id          String        @id @default(uuid())
+  name        String
+  description String
+  projectId   String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+  project     Projects      @relation(fields: [projectId], references: [id])
+  TimeTracker TimeTracker[]
+}
+
+model Projects {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  Tasks     Tasks[]
+}
