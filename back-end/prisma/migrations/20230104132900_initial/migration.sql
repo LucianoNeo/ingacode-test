@@ -11,10 +11,12 @@ CREATE TABLE "Users" (
 -- CreateTable
 CREATE TABLE "Collaborators" (
     "id" TEXT NOT NULL PRIMARY KEY,
+    "userId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "deletedAt" DATETIME
+    "deletedAt" DATETIME,
+    CONSTRAINT "Collaborators_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -55,3 +57,6 @@ CREATE TABLE "Projects" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Users_username_key" ON "Users"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Collaborators_userId_key" ON "Collaborators"("userId");

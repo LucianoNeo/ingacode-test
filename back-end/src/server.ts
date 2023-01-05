@@ -1,38 +1,45 @@
 import cors from "@fastify/cors";
 import { PrismaClient } from '@prisma/client';
 import Fastify from "fastify";
+import { createProject, deleteProject, readAllProjects } from "./controllers/projectController";
+import { createTask, getAllTasks, getTaskById } from "./controllers/taskController";
+import { createTimeTracker, getAllTimeTrackers } from "./controllers/timetrackController";
+
 
 const prisma = new PrismaClient({
-    log: ['query']
+  // log: ['query']
+})
+
+const fastify = Fastify({
+  logger: true,
 })
 
 
 async function bootstrap() {
-    const fastify = Fastify({
-    })
 
-    await fastify.register(cors, {
-        origin: true
-    })
+  await fastify.register(cors, {
+    origin: true
+  })
 
-    fastify.get('/tasks', async()=>{
-        return await prisma.tasks.findMany()
-    })
+  // Project routes
+  fastify.get('/projects', readAllProjects)
+  fastify.post('/projects', createProject)
+  fastify.delete('/projects/:id', deleteProject)
 
-    fastify.get('/projects', async()=>{
-        return await prisma.projects.findMany()
-    })
-
-    fastify.get('/users', async()=>{
-        return await prisma.users.findMany()
-    })
-
-    fastify.get('/timetrackers', async()=>{
-        return await prisma.timeTracker.findMany()
-    })
+  // Task routes
+  fastify.get('/tasks', getAllTasks)
+  fastify.get('/tasks/:id', getTaskById);
+  fastify.post('/tasks', createTask);
 
 
-    await fastify.listen({ port: 3333, host: '0.0.0.0' })
+  // TimeTrack routes
+  fastify.get('/timetrackers', getAllTimeTrackers)
+  fastify.post('/timetrackers', createTimeTracker)
+
+
+
+  await fastify.listen({ port: 3333, host: '0.0.0.0' })
+
 }
 
 

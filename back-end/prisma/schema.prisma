@@ -5,6 +5,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
@@ -13,14 +17,17 @@ datasource db {
 model Users {
   id        String    @id @default(uuid())
   username  String    @unique
-  password  String    
+  password  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+  Collaborators Collaborators?
 }
 
 model Collaborators {
   id          String        @id @default(uuid())
+  userId      String        @unique
+  user        Users         @relation(fields: [userId], references: [id])
   name        String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -46,9 +53,9 @@ model Tasks {
   id          String        @id @default(uuid())
   name        String
   description String
-  projectId   String        
+  projectId   String
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime      
+  updatedAt   DateTime
   deletedAt   DateTime?
   project     Projects      @relation(fields: [projectId], references: [id])
   TimeTracker TimeTracker[]
