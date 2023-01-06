@@ -37,8 +37,8 @@ model Collaborators {
 
 model TimeTracker {
   id             String         @id @default(uuid())
-  startDate      DateTime
-  endDate        DateTime
+  startDate      DateTime?
+  endDate        DateTime?
   timeZoneId     String
   taskId         String
   task           Tasks          @relation(fields: [taskId], references: [id],onDelete: Cascade, onUpdate: Cascade)

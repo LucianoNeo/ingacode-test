@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import moment from 'moment-timezone';
 
 const prisma = new PrismaClient({
-  // log: ['query']
+  log: ['query']
 })
 
 
@@ -103,7 +103,7 @@ export async function createTask(request, reply) {
     if (moment(startDate).isAfter(endDate)) {
       return reply.status(400).send({ error: 'O horário de término deve ser MAIOR que o de início!' });
     }
-    if (overlappingTimetrackers.length > 0) {
+    if (overlappingTimetrackers.length > 0 && startDate != null) {
       return reply.status(400).send({ error: 'Já existe um timetracker para este intervalo de tempo' });
     } else {
       const timeZoneId = moment.tz.guess();
@@ -119,41 +119,76 @@ export async function createTask(request, reply) {
           updatedAt: new Date()
         },
       });
-
-      if (collaboratorId) {
-        await prisma.timeTracker.create({
-          data: {
-            startDate,
-            endDate,
-            timeZoneId,
-            collaborator: {
-              connect: {
-                id: collaboratorId
+      if (startDate != null || startDate != undefined) {
+        if (collaboratorId) {
+          await prisma.timeTracker.create({
+            data: {
+              startDate,
+              endDate,
+              timeZoneId,
+              collaborator: {
+                connect: {
+                  id: collaboratorId
+                }
+              },
+              task: {
+                connect: {
+                  id: task.id
+                }
               }
             },
-            task: {
-              connect: {
-                id: task.id
+
+
+          });
+        } else {
+          await prisma.timeTracker.create({
+            data: {
+              startDate,
+              endDate,
+              timeZoneId,
+              task: {
+                connect: {
+                  id: task.id
+                }
               }
-            }
-          },
+            },
 
-
-        });
-      } else {
-        await prisma.timeTracker.create({
-          data: {
-            startDate,
-            endDate,
-            timeZoneId,
-            task: {
-              connect: {
-                id: task.id
+          });
+        }
+      }
+      else {
+        if (collaboratorId) {
+          await prisma.timeTracker.create({
+            data: {
+              timeZoneId,
+              collaborator: {
+                connect: {
+                  id: collaboratorId
+                }
+              },
+              task: {
+                connect: {
+                  id: task.id
+                }
               }
-            }
-          },
+            },
 
-        });
+
+          });
+        } else {
+          await prisma.timeTracker.create({
+            data: {
+              timeZoneId,
+              task: {
+                connect: {
+                  id: task.id
+                }
+              }
+            },
+
+          });
+        }
+
       }
       reply.status(201).send(task);
     }
