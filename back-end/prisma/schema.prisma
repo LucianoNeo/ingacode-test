@@ -10,7 +10,7 @@ generator erd {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -27,7 +27,7 @@ model Users {
 model Collaborators {
   id          String        @id @default(uuid())
   userId      String        @unique
-  user        Users         @relation(fields: [userId], references: [id])
+  user        Users         @relation(fields: [userId], references: [id],onDelete: Cascade, onUpdate: Cascade)
   name        String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -41,9 +41,9 @@ model TimeTracker {
   endDate        DateTime
   timeZoneId     String
   taskId         String
-  task           Tasks          @relation(fields: [taskId], references: [id])
+  task           Tasks          @relation(fields: [taskId], references: [id],onDelete: Cascade, onUpdate: Cascade)
   collaboratorId String?
-  collaborator   Collaborators? @relation(fields: [collaboratorId], references: [id])
+  collaborator   Collaborators? @relation(fields: [collaboratorId], references: [id],onDelete: Cascade, onUpdate: Cascade)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   deletedAt      DateTime?
@@ -57,7 +57,7 @@ model Tasks {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime
   deletedAt   DateTime?
-  project     Projects      @relation(fields: [projectId], references: [id])
+  project     Projects      @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   TimeTracker TimeTracker[]
 }
 

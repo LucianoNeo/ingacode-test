@@ -138,6 +138,7 @@ export async function createTask(request, reply) {
             }
           },
 
+
         });
       } else {
         await prisma.timeTracker.create({
@@ -157,6 +158,62 @@ export async function createTask(request, reply) {
       reply.status(201).send(task);
     }
   } catch (error: any) {
+    reply.status(500).send({ error: error.message });
+  }
+}
+
+export async function deleteTask(request, reply) {
+  const taskId = request.params.id;
+  try {
+    const task = await prisma.tasks.findFirst({
+      where: {
+        id: taskId,
+      },
+    })
+    if (!task) {
+      reply.status(404).send({ error: "Task não encontrada!" })
+    }
+    await prisma.tasks.delete({
+      where: {
+        id: taskId
+      }
+    })
+    reply.status(201).send({ message: 'Task deletada com sucesso' });
+
+  } catch (error) {
+    reply.status(500).send({ error: error.message });
+  }
+}
+
+export async function modifyTask(request, reply) {
+  const taskId = request.params.id;
+  const { name, description, projectId, collaboratorId } = request.body
+  try {
+    const task = await prisma.tasks.findFirst({
+      where: {
+        id: taskId,
+      },
+    })
+    if (!task) {
+      reply.status(404).send({ error: "Task não encontrada!" })
+    }
+    const taskUpdated = await prisma.tasks.update({
+      where: {
+        id: taskId
+      },
+      data: {
+        name,
+        description,
+        project: {
+          connect: {
+            id: projectId
+          }
+        }
+      }
+    })
+    reply.status(201).send(taskUpdated)
+
+  } catch (error) {
     reply.status(500).send({ error: error.message });
   }
 }

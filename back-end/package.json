@@ -9,9 +9,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "^9.1.7",
     "@types/bcrypt": "^5.0.0",
@@ -24,6 +21,7 @@
     "@fastify/cors": "^8.1.1",
     "@prisma/client": "^4.5.0",
     "bcrypt": "^5.1.0",
+    "date-fns": "^2.29.3",
     "fastify": "^4.9.2",
     "moment-timezone": "^0.5.40",
     "short-unique-id": "^4.4.4",

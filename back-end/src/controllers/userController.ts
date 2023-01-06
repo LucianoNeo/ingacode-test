@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 
 const prisma = new PrismaClient({
@@ -18,9 +18,9 @@ export async function createUser(username: string, password: string) {
     return user;
 }
 
-// createUser('luciano','minhaSenha')
-// createUser('henrique','minhaSenha')
-// createUser('erica','minhaSenha')
+// createUser('luciano', 'minhaSenha')
+// createUser('henrique', 'minhaSenha')
+// createUser('erica', 'minhaSenha')
 
 export async function createCollaborator(name: string, userId: string) {
     const collaborator = await prisma.collaborators.create({
@@ -36,9 +36,9 @@ export async function createCollaborator(name: string, userId: string) {
     return collaborator;
 }
 
-// createCollaborator('luciano','cc0b213b-69f6-4417-9048-df4be1a29843')
-// createCollaborator('henrique','2a2c3a98-4da9-44b8-9cdc-71abdee62ab8')
-// createCollaborator('erica','94f1df5a-5165-4691-8ec5-3a635f631e2e')
+createCollaborator('luciano', '4a67dbb2-68ec-42e5-9924-cb6469f9e431')
+createCollaborator('henrique', '3ecc6333-8e31-4075-a509-1eba16b9cc5b')
+createCollaborator('erica', 'd3024927-333b-4b85-a818-6e9e00e15b12')
 
 export async function login(username: string, password: string) {
     const user = await prisma.users.findUnique({
