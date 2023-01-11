@@ -37,6 +37,7 @@ async function getAllTasks() {
         include: {
             project: {
                 select: {
+                    id: true,
                     name: true
                 }
             },

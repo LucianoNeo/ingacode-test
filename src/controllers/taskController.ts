@@ -33,6 +33,7 @@ export async function getAllTasks() {
     include: {
       project: {
         select: {
+          id: true,
           name: true
         }
       },
@@ -52,7 +53,7 @@ export async function getAllTasks() {
   })
 }
 
-export async function getTaskById(request, reply) {
+export async function getTaskById(request: any, reply: any) {
   try {
     const taskId = request.params.id;
     const task = await prisma.tasks.findFirst({
@@ -89,7 +90,7 @@ export async function getTaskById(request, reply) {
   }
 }
 
-export async function createTask(request, reply) {
+export async function createTask(request: any, reply: any) {
   const { name, description, projectId, startDate, endDate, collaboratorId }: any = request.body;
   try {
     const overlappingTimetrackers = await prisma.timeTracker.findMany({
@@ -197,7 +198,7 @@ export async function createTask(request, reply) {
   }
 }
 
-export async function deleteTask(request, reply) {
+export async function deleteTask(request: any, reply: any) {
   const taskId = request.params.id;
   try {
     const task = await prisma.tasks.findFirst({
@@ -215,12 +216,12 @@ export async function deleteTask(request, reply) {
     })
     reply.status(201).send({ message: 'Task deletada com sucesso' });
 
-  } catch (error) {
+  } catch (error: any) {
     reply.status(500).send({ error: error.message });
   }
 }
 
-export async function modifyTask(request, reply) {
+export async function modifyTask(request: any, reply: any) {
   const taskId = request.params.id;
   const { name, description, projectId, collaboratorId } = request.body
   try {
@@ -248,7 +249,7 @@ export async function modifyTask(request, reply) {
     })
     reply.status(201).send(taskUpdated)
 
-  } catch (error) {
+  } catch (error: any) {
     reply.status(500).send({ error: error.message });
   }
 }

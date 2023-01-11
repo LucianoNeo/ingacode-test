@@ -7,7 +7,7 @@ const prisma = new PrismaClient({
 })
 
 
-export async function createUser(username: string, password: any) {
+export async function createUser(username, password) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.users.create({
         data: {
@@ -32,7 +32,7 @@ export async function checkUsers() {
     }
 }
 
-export async function createCollaborator(name: string, userId: string) {
+export async function createCollaborator(name, userId) {
     const collaborator = await prisma.collaborators.create({
         data: {
             name,

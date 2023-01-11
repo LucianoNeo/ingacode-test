@@ -2,7 +2,7 @@ import cors from "@fastify/cors";
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import Fastify from "fastify";
-import { createProject, deleteProject, getAllProjects, getProjectById, modifyProject } from "./controllers/projectController";
+import { createProject,deleteProject,getAllProjects,getProjectById,modifyProject } from "./controllers/projectController";
 import { createTask, deleteTask, getAllTasks, getTaskById, modifyTask } from "./controllers/taskController";
 import { getDayTotalMinutes, getMonthTotalMinutes } from "./controllers/timeController";
 import { createTimeTracker, getAllTimeTrackers, getTimeTrackerById, modifyTimeTracker } from "./controllers/timetrackController";
