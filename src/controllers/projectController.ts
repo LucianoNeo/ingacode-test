@@ -4,7 +4,7 @@ const prisma = new PrismaClient({
   // log: ['query']
 })
 
-export async function createProject(request, reply) {
+export async function createProject(request: any, reply: any) {
   const { name }: any = request.body;
   const project = await prisma.projects.create({
     data: {
@@ -15,7 +15,7 @@ export async function createProject(request, reply) {
 }
 
 
-export async function deleteProject(request, reply) {
+export async function deleteProject(request: any, reply: any) {
   const projectId = request.params.id;
   try {
     const project = await prisma.projects.findFirst({
@@ -33,7 +33,7 @@ export async function deleteProject(request, reply) {
     })
     reply.status(201).send({ message: 'Projeto deletado com sucesso' });
 
-  } catch (error) {
+  } catch (error: any) {
     reply.status(500).send({ error: error.message });
   }
 }
@@ -44,6 +44,7 @@ export async function getAllProjects() {
       Tasks: {
         select: {
           name: true,
+          id: true,
           TimeTracker: {
             select: {
               startDate: true,
@@ -61,7 +62,7 @@ export async function getAllProjects() {
   })
 }
 
-export async function getProjectById(request, reply) {
+export async function getProjectById(request: any, reply: any) {
   const projectId = request.params.id;
   try {
     const project = await prisma.projects.findFirst({
@@ -74,12 +75,12 @@ export async function getProjectById(request, reply) {
     }
     reply.status(201).send(project);
 
-  } catch (error) {
+  } catch (error: any) {
     reply.status(500).send({ error: error.message });
   }
 }
 
-export async function modifyProject(request, reply) {
+export async function modifyProject(request: any, reply: any) {
   const projectId = request.params.id;
   const name = request.body.name
   try {
@@ -101,7 +102,7 @@ export async function modifyProject(request, reply) {
     })
     reply.status(201).send(projectUpdated)
 
-  } catch (error) {
+  } catch (error: any) {
     reply.status(500).send({ error: error.message });
   }
 }

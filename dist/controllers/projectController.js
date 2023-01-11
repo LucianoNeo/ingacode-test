@@ -44,6 +44,7 @@ async function getAllProjects() {
             Tasks: {
                 select: {
                     name: true,
+                    id: true,
                     TimeTracker: {
                         select: {
                             startDate: true,
