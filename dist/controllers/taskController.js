@@ -46,6 +46,7 @@ async function getAllTasks() {
                     startDate: true,
                     endDate: true,
                     timeZoneId: true,
+                    id: true,
                     collaborator: {
                         select: {
                             name: true
@@ -75,6 +76,7 @@ async function getTaskById(request, reply) {
                         startDate: true,
                         endDate: true,
                         timeZoneId: true,
+                        id: true,
                         collaborator: {
                             select: {
                                 name: true

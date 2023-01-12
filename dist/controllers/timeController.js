@@ -59,6 +59,8 @@ async function getDayTotalMinutes() {
         else {
             let totalMinutes = 0;
             let totalHours = 0;
+            let totalMinutesString;
+            let totalHoursString;
             for (const count of timetrackers) {
                 const startDate = count.startDate;
                 const endDate = count.endDate;
@@ -71,12 +73,12 @@ async function getDayTotalMinutes() {
             totalMinutes %= 60;
             console.log(totalHours);
             if (totalHours <= 9) {
-                totalHours = String('0' + totalHours);
+                totalHoursString = String('0' + totalHours);
             }
             if (totalMinutes <= 9) {
-                totalMinutes = String('0' + totalMinutes);
+                totalMinutesString = String('0' + totalMinutes);
             }
-            return (`${totalHours}:${totalMinutes}`);
+            return (`${totalHoursString}:${totalMinutesString}`);
         }
     }
     catch (error) {
@@ -109,6 +111,8 @@ async function getMonthTotalMinutes() {
         else {
             let totalMinutes = 0;
             let totalHours = 0;
+            let totalMinutesString;
+            let totalHoursString;
             for (const count of timetrackers) {
                 const startDate = count.startDate;
                 const endDate = count.endDate;
@@ -121,10 +125,10 @@ async function getMonthTotalMinutes() {
             totalMinutes %= 60;
             console.log(totalHours);
             if (totalHours <= 9) {
-                totalHours = String('0' + totalHours);
+                totalHoursString = String('0' + totalHours);
             }
             if (totalMinutes <= 9) {
-                totalMinutes = String('0' + totalMinutes);
+                totalMinutesString = String('0' + totalMinutes);
             }
             return (`${totalHours}:${totalMinutes}`);
         }

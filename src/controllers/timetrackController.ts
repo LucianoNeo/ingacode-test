@@ -20,7 +20,7 @@ export async function getAllTimeTrackers() {
   })
 }
 
-export async function createTimeTracker(request, reply) {
+export async function createTimeTracker(request: any, reply: any) {
   const { startDate, endDate, taskId, collaboratorId }: any = request.body;
   const overlappingTimetrackers = await prisma.timeTracker.findMany({
     where: {
@@ -30,10 +30,10 @@ export async function createTimeTracker(request, reply) {
       ],
     },
   });
-  if (moment(startDate).isAfter(endDate)) {
+  if (endDate && moment(startDate).isAfter(endDate)) {
     return reply.status(400).send({ error: 'O horário de término deve ser MAIOR que o de início!' });
   }
-  else if (overlappingTimetrackers.length > 0) {
+  else if (startDate && endDate && overlappingTimetrackers.length > 0) {
     return reply.status(400).send({ error: 'Já existe um timetracker para este intervalo de tempo' });
   } else {
     const timeZoneId = moment.tz.guess();
@@ -77,7 +77,30 @@ export async function createTimeTracker(request, reply) {
   }
 }
 
-export async function modifyTimeTracker(request, reply) {
+export async function deleteTT(request: any, reply: any) {
+  const id = request.params.id;
+  try {
+    const task = await prisma.timeTracker.findFirst({
+      where: {
+        id
+      },
+    })
+    if (!task) {
+      reply.status(404).send({ error: "TT não encontrado!" })
+    }
+    await prisma.timeTracker.delete({
+      where: {
+        id
+      }
+    })
+    reply.status(201).send({ message: 'TT deletado com sucesso' });
+
+  } catch (error: any) {
+    reply.status(500).send({ error: error.message });
+  }
+}
+
+export async function modifyTimeTracker(request: any, reply: any) {
   const TimeTrackerId = request.params.id;
   const { startDate, endDate, taskId, collaboratorId } = request.body
   try {
@@ -95,17 +118,7 @@ export async function modifyTimeTracker(request, reply) {
       },
       data: {
         startDate,
-        endDate,
-        task: {
-          connect: {
-            id: taskId
-          }
-        },
-        collaborator: {
-          connect: {
-            id: collaboratorId
-          }
-        }
+        endDate
       },
       select: {
         startDate: true,
@@ -124,12 +137,12 @@ export async function modifyTimeTracker(request, reply) {
     })
     reply.status(201).send(timeTrackerUpdated)
 
-  } catch (error) {
+  } catch (error: any) {
     reply.status(500).send({ error: error.message });
   }
 }
 
-export async function getTimeTrackerById(request, reply) {
+export async function getTimeTrackerById(request: any, reply: any) {
   try {
     const timeTrackerId = request.params.id;
     const timeTracker = await prisma.timeTracker.findFirst({

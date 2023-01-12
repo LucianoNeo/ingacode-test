@@ -56,13 +56,13 @@ async function bootstrap() {
             }
         });
         if (!user) {
-            reply.status(401).send({ error: 'usuario invalido' });
+            reply.status(401).send({ error: 'Usuário ou Senha inválida' });
             return;
         }
         const isValidPassword = await bcrypt.compare(password, user.password);
         if (isValidPassword) {
             const token = fastify.jwt.sign({ id: user.id, username: user.username }, { expiresIn: '1d' });
-            reply.send({ token });
+            reply.send({ token, username });
         }
         else {
             reply.status(401).send({ error: 'Usuário ou Senha inválida' });
@@ -98,6 +98,7 @@ async function bootstrap() {
     fastify.get('/timetrackers/:id', { onRequest: [fastify.authenticate] }, timetrackController_1.getTimeTrackerById);
     fastify.post('/timetrackers', { onRequest: [fastify.authenticate] }, timetrackController_1.createTimeTracker);
     fastify.put('/timetrackers/:id', { onRequest: [fastify.authenticate] }, timetrackController_1.modifyTimeTracker);
+    fastify.delete('/timetrackers/:id', { onRequest: [fastify.authenticate] }, timetrackController_1.deleteTT);
     //Time routes
     fastify.get('/daytotalminutes', { onRequest: [fastify.authenticate] }, timeController_1.getDayTotalMinutes);
     fastify.get('/monthtotalminutes', { onRequest: [fastify.authenticate] }, timeController_1.getMonthTotalMinutes);

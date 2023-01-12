@@ -7,7 +7,7 @@ const prisma = new PrismaClient({
 })
 
 
-export async function createUser(username, password) {
+export async function createUser(username: string, password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.users.create({
         data: {
@@ -21,18 +21,18 @@ export async function createUser(username, password) {
 export async function checkUsers() {
     const users = await prisma.users.findMany()
     if (users.length == 0) {
-        createUser('luciano', process.env.USER_PASSWORD)
+        createUser('luciano', process.env.USER_PASSWORD!)
         console.log('Criando usuario: luciano')
-        createUser('henrique', process.env.USER_PASSWORD)
+        createUser('henrique', process.env.USER_PASSWORD!)
         console.log('Criando usuario: henrique')
-        createUser('erica', process.env.USER_PASSWORD)
+        createUser('erica', process.env.USER_PASSWORD!)
         console.log('Criando usuario: erica')
     } else {
         console.log('Users já existentes')
     }
 }
 
-export async function createCollaborator(name, userId) {
+export async function createCollaborator(name: string, userId: string) {
     const collaborator = await prisma.collaborators.create({
         data: {
             name,

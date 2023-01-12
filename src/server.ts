@@ -2,10 +2,10 @@ import cors from "@fastify/cors";
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import Fastify from "fastify";
-import { createProject,deleteProject,getAllProjects,getProjectById,modifyProject } from "./controllers/projectController";
+import { createProject, deleteProject, getAllProjects, getProjectById, modifyProject } from "./controllers/projectController";
 import { createTask, deleteTask, getAllTasks, getTaskById, modifyTask } from "./controllers/taskController";
 import { getDayTotalMinutes, getMonthTotalMinutes } from "./controllers/timeController";
-import { createTimeTracker, getAllTimeTrackers, getTimeTrackerById, modifyTimeTracker } from "./controllers/timetrackController";
+import { createTimeTracker, deleteTT, getAllTimeTrackers, getTimeTrackerById, modifyTimeTracker } from "./controllers/timetrackController";
 import { checkCollaborators, checkUsers } from "./controllers/userController";
 
 
@@ -30,7 +30,7 @@ async function bootstrap() {
 
   // Authentication routes
 
-  fastify.post('/login', async (request, reply) => {
+  fastify.post('/login', async (request: any, reply: any) => {
     const { username, password } = request.body;
     const user = await prisma.users.findFirst({
       where: {
@@ -38,21 +38,21 @@ async function bootstrap() {
       }
     });
     if (!user) {
-      reply.status(401).send({ error: 'usuario invalido' });
+      reply.status(401).send({ error: 'Usuário ou Senha inválida' });
       return
     }
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (isValidPassword) {
       const token = fastify.jwt.sign({ id: user.id, username: user.username }, { expiresIn: '1d' });
 
-      reply.send({ token });
+      reply.send({ token, username });
     } else {
       reply.status(401).send({ error: 'Usuário ou Senha inválida' });
     }
   }
   )
 
-  fastify.decorate('authenticate', async (request, reply) => {
+  fastify.decorate('authenticate', async (request: any, reply: any) => {
     try {
       await request.jwtVerify()
     } catch (error) {
@@ -63,7 +63,7 @@ async function bootstrap() {
   fastify.get('/validatetoken',
     {
       onRequest: [fastify.authenticate]
-    }, async (request, reply) => {
+    }, async (request: any, reply: any) => {
       return request.user
     })
 
@@ -71,8 +71,6 @@ async function bootstrap() {
   // Project routes
   fastify.get('/projects', { onRequest: [fastify.authenticate] }, getAllProjects
   );
-
-
 
   fastify.get('/projects/:id', { onRequest: [fastify.authenticate] }, getProjectById);
   fastify.post('/projects', { onRequest: [fastify.authenticate] }, createProject)
@@ -92,6 +90,8 @@ async function bootstrap() {
   fastify.get('/timetrackers/:id', { onRequest: [fastify.authenticate] }, getTimeTrackerById);
   fastify.post('/timetrackers', { onRequest: [fastify.authenticate] }, createTimeTracker)
   fastify.put('/timetrackers/:id', { onRequest: [fastify.authenticate] }, modifyTimeTracker)
+  fastify.delete('/timetrackers/:id', { onRequest: [fastify.authenticate] }, deleteTT)
+
 
   //Time routes
   fastify.get('/daytotalminutes', { onRequest: [fastify.authenticate] }, getDayTotalMinutes)
