@@ -1,1 +1,1 @@
-"build": "tsc -p tsconfig.json",
+"build": "tsc -p tsconfig.json"
