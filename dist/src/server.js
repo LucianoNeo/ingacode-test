@@ -62,6 +62,7 @@ async function bootstrap() {
         }
         const isValidPassword = await bcrypt.compare(password, user.password);
         if (isValidPassword) {
+            /* @ts-ignore */
             const token = fastify.jwt.sign({ id: user.id, username: user.username }, { expiresIn: '1d' });
             reply.send({ token, username });
         }
@@ -78,32 +79,48 @@ async function bootstrap() {
         }
     });
     fastify.get('/validatetoken', {
+        /* @ts-ignore */
         onRequest: [fastify.authenticate]
     }, async (request, reply) => {
         return request.user;
     });
-    // Project routes
+    /* @ts-ignore */
     fastify.get('/projects', { onRequest: [fastify.authenticate] }, projectController_1.getAllProjects);
+    /* @ts-ignore */
     fastify.get('/projects/:id', { onRequest: [fastify.authenticate] }, projectController_1.getProjectById);
+    // @ts-ignore
     fastify.post('/projects', { onRequest: [fastify.authenticate] }, projectController_1.createProject);
+    // @ts-ignore
     fastify.delete('/projects/:id', { onRequest: [fastify.authenticate] }, projectController_1.deleteProject);
+    // @ts-ignore
     fastify.put('/projects/:id', { onRequest: [fastify.authenticate] }, projectController_1.modifyProject);
-    // Task routes
+    /* @ts-ignore */
     fastify.get('/tasks', { onRequest: [fastify.authenticate] }, taskController_1.getAllTasks);
+    // @ts-ignore
     fastify.get('/tasks/:id', { onRequest: [fastify.authenticate] }, taskController_1.getTaskById);
+    // @ts-ignore
     fastify.post('/tasks', { onRequest: [fastify.authenticate] }, taskController_1.createTask);
+    // @ts-ignore
     fastify.delete('/tasks/:id', { onRequest: [fastify.authenticate] }, taskController_1.deleteTask);
+    // @ts-ignore
     fastify.put('/tasks/:id', { onRequest: [fastify.authenticate] }, taskController_1.modifyTask);
-    // TimeTrack routes
+    // @ts-ignore
     fastify.get('/timetrackers', { onRequest: [fastify.authenticate] }, timetrackController_1.getAllTimeTrackers);
+    // @ts-ignore
     fastify.get('/timetrackers/:id', { onRequest: [fastify.authenticate] }, timetrackController_1.getTimeTrackerById);
+    // @ts-ignore
     fastify.post('/timetrackers', { onRequest: [fastify.authenticate] }, timetrackController_1.createTimeTracker);
+    // @ts-ignore
     fastify.put('/timetrackers/:id', { onRequest: [fastify.authenticate] }, timetrackController_1.modifyTimeTracker);
+    // @ts-ignore
     fastify.delete('/timetrackers/:id', { onRequest: [fastify.authenticate] }, timetrackController_1.deleteTT);
-    //Time routes
+    // @ts-ignore
     fastify.post('/daytotalminutes', { onRequest: [fastify.authenticate] }, timeController_1.getDayTotalMinutes);
+    // @ts-ignore
     fastify.get('/monthtotalminutes', { onRequest: [fastify.authenticate] }, timeController_1.getMonthTotalMinutes);
+    // @ts-ignore
     fastify.get('/collaborators', { onRequest: [fastify.authenticate] }, collaboratorsController_1.getAllCollaborators);
+    // @ts-ignore
     fastify.get('/collaborators:id', { onRequest: [fastify.authenticate] }, collaboratorsController_1.getCollaboratorById);
     await fastify.listen({ port: 3333, host: '0.0.0.0' });
 }

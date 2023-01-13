@@ -67,9 +67,11 @@ export async function getDayTotalMinutes(request: any, reply: any) {
       console.log(totalHours)
       console.log(totalMinutes)
       if (totalHours <= 9) {
+        /* @ts-ignore */
         totalHours = String('0' + totalHours)
       }
       if (totalMinutes <= 9) {
+        /* @ts-ignore */
         totalMinutes = String('0' + totalMinutes)
       }
       reply.status(201).send(`${totalHours}:${totalMinutes}`)
@@ -112,9 +114,11 @@ export async function getMonthTotalMinutes(request: any, reply: any) {
       totalHours = Math.floor(totalMinutes / 60);
       totalMinutes = Math.floor(totalMinutes %= 60)
       if (totalHours <= 9) {
+        /* @ts-ignore */
         totalHours = String('0' + totalHours)
       }
       if (totalMinutes <= 9) {
+        /* @ts-ignore */
         totalMinutes = String('0' + totalMinutes)
       }
       reply.status(201).send(`${totalHours}:${totalMinutes}`)
