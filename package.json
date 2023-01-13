@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "generate": "npx prisma generate",
     "deploy": "npx prisma migrate deploy",
-    "build": "npm run generate && tsc -p tsconfig.json",
+    "build": "npm run generate",
     "start": "npm run build && node dist/server.js"
   },
   "prisma": {
