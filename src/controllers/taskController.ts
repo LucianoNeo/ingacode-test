@@ -103,10 +103,10 @@ export async function createTask(request: any, reply: any) {
         ],
       },
     });
-    if (moment(startDate).isAfter(endDate)) {
+    if (endDate && moment(startDate).isAfter(endDate)) {
       return reply.status(400).send({ error: 'O horário de término deve ser MAIOR que o de início!' });
     }
-    if (overlappingTimetrackers.length > 0 && startDate != null) {
+    if (overlappingTimetrackers.length > 0 && startDate && endDate) {
       return reply.status(400).send({ error: 'Já existe um timetracker para este intervalo de tempo' });
     } else {
       const timeZoneId = moment.tz.guess();

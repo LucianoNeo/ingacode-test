@@ -34,19 +34,20 @@ async function getTaskTotalMinutes(taskId) {
 }
 exports.getTaskTotalMinutes = getTaskTotalMinutes;
 ;
-async function getDayTotalMinutes() {
+async function getDayTotalMinutes(request, reply) {
+    const { daySent } = request.body;
     try {
-        const today = (0, date_fns_1.startOfDay)(new Date());
-        const tomorrow = (0, date_fns_1.endOfDay)(new Date());
+        const day = (0, date_fns_1.startOfDay)(new Date(daySent));
+        const day_end = (0, date_fns_1.endOfDay)(new Date(daySent));
         const timetrackers = await prisma.timeTracker.findMany({
             where: {
                 AND: [
                     {
                         startDate: {
-                            gte: today
+                            gte: day
                         },
                         endDate: {
-                            lte: tomorrow
+                            lte: day_end
                         }
                     }
                 ]
@@ -54,7 +55,7 @@ async function getDayTotalMinutes() {
         });
         console.log(timetrackers);
         if (!timetrackers) {
-            return 'Task não encontrada';
+            reply.status(404).send('Tempo não encontrado');
         }
         else {
             let totalMinutes = 0;
@@ -68,15 +69,16 @@ async function getDayTotalMinutes() {
             }
             console.log(totalMinutes);
             totalHours = Math.floor(totalMinutes / 60);
-            totalMinutes %= 60;
+            totalMinutes = Math.floor(totalMinutes %= 60);
             console.log(totalHours);
+            console.log(totalMinutes);
             if (totalHours <= 9) {
                 totalHours = String('0' + totalHours);
             }
             if (totalMinutes <= 9) {
                 totalMinutes = String('0' + totalMinutes);
             }
-            return (`${totalHours}:${totalMinutes}`);
+            reply.status(201).send(`${totalHours}:${totalMinutes}`);
         }
     }
     catch (error) {
@@ -85,7 +87,7 @@ async function getDayTotalMinutes() {
 }
 exports.getDayTotalMinutes = getDayTotalMinutes;
 ;
-async function getMonthTotalMinutes() {
+async function getMonthTotalMinutes(request, reply) {
     try {
         const thisMonth = (0, date_fns_1.startOfMonth)(new Date());
         const nextMonth = (0, date_fns_1.endOfMonth)(new Date());
@@ -104,7 +106,7 @@ async function getMonthTotalMinutes() {
             }
         });
         if (!timetrackers) {
-            return 'Task não encontrada';
+            reply.status(404).send('Tempo não encontrado');
         }
         else {
             let totalMinutes = 0;
@@ -116,17 +118,15 @@ async function getMonthTotalMinutes() {
                 const minutes = duration.asMinutes();
                 totalMinutes += minutes;
             }
-            console.log(totalMinutes);
             totalHours = Math.floor(totalMinutes / 60);
-            totalMinutes %= 60;
-            console.log(totalHours);
+            totalMinutes = Math.floor(totalMinutes %= 60);
             if (totalHours <= 9) {
                 totalHours = String('0' + totalHours);
             }
             if (totalMinutes <= 9) {
                 totalMinutes = String('0' + totalMinutes);
             }
-            return (`${totalHours}:${totalMinutes}`);
+            reply.status(201).send(`${totalHours}:${totalMinutes}`);
         }
     }
     catch (error) {

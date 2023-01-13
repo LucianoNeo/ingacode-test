@@ -2,6 +2,7 @@ import cors from "@fastify/cors";
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import Fastify from "fastify";
+import { getAllCollaborators, getCollaboratorById } from "./controllers/collaboratorsController";
 import { createProject, deleteProject, getAllProjects, getProjectById, modifyProject } from "./controllers/projectController";
 import { createTask, deleteTask, getAllTasks, getTaskById, modifyTask } from "./controllers/taskController";
 import { getDayTotalMinutes, getMonthTotalMinutes } from "./controllers/timeController";
@@ -94,8 +95,11 @@ async function bootstrap() {
 
 
   //Time routes
-  fastify.get('/daytotalminutes', { onRequest: [fastify.authenticate] }, getDayTotalMinutes)
+  fastify.post('/daytotalminutes', { onRequest: [fastify.authenticate] }, getDayTotalMinutes)
   fastify.get('/monthtotalminutes', { onRequest: [fastify.authenticate] }, getMonthTotalMinutes)
+
+  fastify.get('/collaborators', { onRequest: [fastify.authenticate] }, getAllCollaborators)
+  fastify.get('/collaborators:id', { onRequest: [fastify.authenticate] }, getCollaboratorById)
 
 
 
@@ -107,4 +111,6 @@ async function bootstrap() {
 
 bootstrap()
 checkUsers()
-checkCollaborators()
+setTimeout(() => {
+  checkCollaborators()
+}, 5000);

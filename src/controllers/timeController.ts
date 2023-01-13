@@ -29,19 +29,20 @@ export async function getTaskTotalMinutes(taskId: string) {
   }
 };
 
-export async function getDayTotalMinutes() {
+export async function getDayTotalMinutes(request: any, reply: any) {
+  const { daySent }: any = request.body;
   try {
-    const today = startOfDay(new Date());
-    const tomorrow = endOfDay(new Date());
+    const day = startOfDay(new Date(daySent));
+    const day_end = endOfDay(new Date(daySent));
     const timetrackers = await prisma.timeTracker.findMany({
       where: {
         AND: [
           {
             startDate: {
-              gte: today
+              gte: day
             },
             endDate: {
-              lte: tomorrow
+              lte: day_end
             }
           }
         ]
@@ -49,12 +50,10 @@ export async function getDayTotalMinutes() {
     })
     console.log(timetrackers)
     if (!timetrackers) {
-      return 'Task não encontrada'
+      reply.status(404).send('Tempo não encontrado')
     } else {
       let totalMinutes = 0;
       let totalHours = 0;
-      let totalMinutesString
-      let totalHoursString
       for (const count of timetrackers) {
         const startDate = count.startDate;
         const endDate = count.endDate;
@@ -64,22 +63,23 @@ export async function getDayTotalMinutes() {
       }
       console.log(totalMinutes)
       totalHours = Math.floor(totalMinutes / 60);
-      totalMinutes %= 60;
+      totalMinutes = Math.floor(totalMinutes %= 60)
       console.log(totalHours)
+      console.log(totalMinutes)
       if (totalHours <= 9) {
-        totalHoursString = String('0' + totalHours)
+        totalHours = String('0' + totalHours)
       }
       if (totalMinutes <= 9) {
-        totalMinutesString = String('0' + totalMinutes)
+        totalMinutes = String('0' + totalMinutes)
       }
-      return (`${totalHoursString}:${totalMinutesString}`)
+      reply.status(201).send(`${totalHours}:${totalMinutes}`)
     }
   } catch (error) {
     return error
   }
 };
 
-export async function getMonthTotalMinutes() {
+export async function getMonthTotalMinutes(request: any, reply: any) {
   try {
     const thisMonth = startOfMonth(new Date());
     const nextMonth = endOfMonth(new Date());
@@ -98,12 +98,10 @@ export async function getMonthTotalMinutes() {
       }
     })
     if (!timetrackers) {
-      return 'Task não encontrada'
+      reply.status(404).send('Tempo não encontrado')
     } else {
       let totalMinutes = 0;
       let totalHours = 0;
-      let totalMinutesString
-      let totalHoursString
       for (const count of timetrackers) {
         const startDate = count.startDate;
         const endDate = count.endDate;
@@ -111,17 +109,15 @@ export async function getMonthTotalMinutes() {
         const minutes = duration.asMinutes();
         totalMinutes += minutes;
       }
-      console.log(totalMinutes)
       totalHours = Math.floor(totalMinutes / 60);
-      totalMinutes %= 60;
-      console.log(totalHours)
+      totalMinutes = Math.floor(totalMinutes %= 60)
       if (totalHours <= 9) {
-        totalHoursString = String('0' + totalHours)
+        totalHours = String('0' + totalHours)
       }
       if (totalMinutes <= 9) {
-        totalMinutesString = String('0' + totalMinutes)
+        totalMinutes = String('0' + totalMinutes)
       }
-      return (`${totalHours}:${totalMinutes}`)
+      reply.status(201).send(`${totalHours}:${totalMinutes}`)
     }
   } catch (error) {
     return error

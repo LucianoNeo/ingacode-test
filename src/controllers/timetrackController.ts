@@ -118,7 +118,8 @@ export async function modifyTimeTracker(request: any, reply: any) {
       },
       data: {
         startDate,
-        endDate
+        endDate,
+        collaboratorId,
       },
       select: {
         startDate: true,
