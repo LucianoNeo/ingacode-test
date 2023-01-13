@@ -1,12 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMonthTotalMinutes = exports.getDayTotalMinutes = exports.getTaskTotalMinutes = void 0;
 const client_1 = require("@prisma/client");
 const date_fns_1 = require("date-fns");
-const moment_timezone_1 = __importDefault(require("moment-timezone"));
 const prisma = new client_1.PrismaClient({
 // log: ['query']
 });
@@ -21,9 +17,7 @@ async function getTaskTotalMinutes(taskId) {
             for (const count of timetrackers) {
                 const startDate = count.startDate;
                 const endDate = count.endDate;
-                const duration = moment_timezone_1.default.duration((0, moment_timezone_1.default)(endDate).diff((0, moment_timezone_1.default)(startDate)));
-                const minutes = duration.asMinutes();
-                totalMinutes += minutes;
+                totalMinutes += (0, date_fns_1.differenceInMinutes)(Number(endDate), Number(startDate));
             }
             return totalMinutes;
         }
@@ -63,9 +57,7 @@ async function getDayTotalMinutes(request, reply) {
             for (const count of timetrackers) {
                 const startDate = count.startDate;
                 const endDate = count.endDate;
-                const duration = moment_timezone_1.default.duration((0, moment_timezone_1.default)(endDate).diff((0, moment_timezone_1.default)(startDate)));
-                const minutes = duration.asMinutes();
-                totalMinutes += minutes;
+                totalMinutes += (0, date_fns_1.differenceInMinutes)(Number(endDate), Number(startDate));
             }
             console.log(totalMinutes);
             totalHours = Math.floor(totalMinutes / 60);
@@ -116,9 +108,7 @@ async function getMonthTotalMinutes(request, reply) {
             for (const count of timetrackers) {
                 const startDate = count.startDate;
                 const endDate = count.endDate;
-                const duration = moment_timezone_1.default.duration((0, moment_timezone_1.default)(endDate).diff((0, moment_timezone_1.default)(startDate)));
-                const minutes = duration.asMinutes();
-                totalMinutes += minutes;
+                totalMinutes += (0, date_fns_1.differenceInMinutes)(Number(endDate), Number(startDate));
             }
             totalHours = Math.floor(totalMinutes / 60);
             totalMinutes = Math.floor(totalMinutes %= 60);

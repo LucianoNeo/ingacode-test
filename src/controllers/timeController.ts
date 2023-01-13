@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { endOfDay, startOfDay, startOfMonth, endOfMonth } from 'date-fns';
+import { endOfDay, startOfDay, startOfMonth, endOfMonth, differenceInMinutes } from 'date-fns';
 import moment from 'moment-timezone';
 
 
@@ -18,9 +18,7 @@ export async function getTaskTotalMinutes(taskId: string) {
       for (const count of timetrackers) {
         const startDate = count.startDate;
         const endDate = count.endDate;
-        const duration = moment.duration(moment(endDate).diff(moment(startDate)));
-        const minutes = duration.asMinutes();
-        totalMinutes += minutes;
+        totalMinutes += differenceInMinutes(Number(endDate), Number(startDate));
       }
       return totalMinutes
     }
@@ -57,9 +55,7 @@ export async function getDayTotalMinutes(request: any, reply: any) {
       for (const count of timetrackers) {
         const startDate = count.startDate;
         const endDate = count.endDate;
-        const duration = moment.duration(moment(endDate).diff(moment(startDate)));
-        const minutes = duration.asMinutes();
-        totalMinutes += minutes;
+        totalMinutes += differenceInMinutes(Number(endDate), Number(startDate));
       }
       console.log(totalMinutes)
       totalHours = Math.floor(totalMinutes / 60);
@@ -107,9 +103,7 @@ export async function getMonthTotalMinutes(request: any, reply: any) {
       for (const count of timetrackers) {
         const startDate = count.startDate;
         const endDate = count.endDate;
-        const duration = moment.duration(moment(endDate).diff(moment(startDate)));
-        const minutes = duration.asMinutes();
-        totalMinutes += minutes;
+        totalMinutes += differenceInMinutes(Number(endDate), Number(startDate));
       }
       totalHours = Math.floor(totalMinutes / 60);
       totalMinutes = Math.floor(totalMinutes %= 60)
