@@ -8,6 +8,8 @@ import { createTask, deleteTask, getAllTasks, getTaskById, modifyTask } from "./
 import { getDayTotalMinutes, getMonthTotalMinutes } from "./controllers/timeController";
 import { createTimeTracker, deleteTT, getAllTimeTrackers, getTimeTrackerById, modifyTimeTracker } from "./controllers/timetrackController";
 import { checkCollaborators, checkUsers } from "./controllers/userController";
+const moment = require('moment-timezone');
+moment.tz.setDefault("America/Sao_Paulo");
 
 
 const prisma = new PrismaClient({
@@ -128,4 +130,5 @@ bootstrap()
 checkUsers()
 setTimeout(() => {
   checkCollaborators()
+  console.log(moment().format());
 }, 5000);

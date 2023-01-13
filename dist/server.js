@@ -36,6 +36,8 @@ const taskController_1 = require("./controllers/taskController");
 const timeController_1 = require("./controllers/timeController");
 const timetrackController_1 = require("./controllers/timetrackController");
 const userController_1 = require("./controllers/userController");
+const moment = require('moment-timezone');
+moment.tz.setDefault("America/Sao_Paulo");
 const prisma = new client_1.PrismaClient({
 // log: ['query']
 });
@@ -128,4 +130,5 @@ bootstrap();
 (0, userController_1.checkUsers)();
 setTimeout(() => {
     (0, userController_1.checkCollaborators)();
+    console.log(moment().format());
 }, 5000);
