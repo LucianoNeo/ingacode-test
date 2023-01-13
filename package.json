@@ -4,9 +4,14 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
-    "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.json"
+    "generate": "npx prisma generate",
+    "deploy": "npx prisma migrate deploy",
+    "build": "npm run generate && tsc -p tsconfig.json",
+    "start": "npm run build && node dist/server.js"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
   },
   "keywords": [],
   "author": "",
