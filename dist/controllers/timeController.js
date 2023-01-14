@@ -6,11 +6,12 @@ const date_fns_1 = require("date-fns");
 const prisma = new client_1.PrismaClient({
 // log: ['query']
 });
-async function getTaskTotalMinutes(taskId) {
+async function getTaskTotalMinutes(request, reply) {
+    const taskId = request.params.taskId;
     try {
         const timetrackers = await prisma.timeTracker.findMany({ where: { taskId } });
         if (!timetrackers) {
-            return 'Task não encontrada';
+            reply.status(404).send({ error: 'Task não encontrada' });
         }
         else {
             let totalMinutes = 0;
@@ -19,11 +20,11 @@ async function getTaskTotalMinutes(taskId) {
                 const endDate = count.endDate;
                 totalMinutes += (0, date_fns_1.differenceInMinutes)(Number(endDate), Number(startDate));
             }
-            return totalMinutes;
+            reply.status(200).send(totalMinutes);
         }
     }
     catch (error) {
-        return error;
+        reply.status(401).send(error);
     }
 }
 exports.getTaskTotalMinutes = getTaskTotalMinutes;

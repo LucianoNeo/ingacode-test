@@ -8,11 +8,12 @@ const prisma = new PrismaClient({
 })
 
 
-export async function getTaskTotalMinutes(taskId: string) {
+export async function getTaskTotalMinutes(request: any, reply: any) {
+  const taskId = request.params.taskId;
   try {
     const timetrackers = await prisma.timeTracker.findMany({ where: { taskId } });
     if (!timetrackers) {
-      return 'Task não encontrada'
+      reply.status(404).send({ error: 'Task não encontrada' })
     } else {
       let totalMinutes = 0;
       for (const count of timetrackers) {
@@ -20,12 +21,13 @@ export async function getTaskTotalMinutes(taskId: string) {
         const endDate = count.endDate;
         totalMinutes += differenceInMinutes(Number(endDate), Number(startDate));
       }
-      return totalMinutes
+      reply.status(200).send(totalMinutes)
     }
   } catch (error) {
-    return error
+    reply.status(401).send(error)
   }
 };
+
 
 export async function getDayTotalMinutes(request: any, reply: any) {
   const { daySent }: any = request.body;

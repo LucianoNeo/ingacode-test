@@ -1,4 +1,0 @@
-[[redirects]]
-  from = "/*"
-  to = "dist/server.js"
-  status = 200

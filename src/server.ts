@@ -5,7 +5,7 @@ import Fastify from "fastify";
 import { getAllCollaborators, getCollaboratorById } from "./controllers/collaboratorsController";
 import { createProject, deleteProject, getAllProjects, getProjectById, modifyProject } from "./controllers/projectController";
 import { createTask, deleteTask, getAllTasks, getTaskById, modifyTask } from "./controllers/taskController";
-import { getDayTotalMinutes, getMonthTotalMinutes } from "./controllers/timeController";
+import { getDayTotalMinutes, getMonthTotalMinutes, getTaskTotalMinutes } from "./controllers/timeController";
 import { createTimeTracker, deleteTT, getAllTimeTrackers, getTimeTrackerById, modifyTimeTracker } from "./controllers/timetrackController";
 import { checkCollaborators, checkUsers } from "./controllers/userController";
 const moment = require('moment-timezone');
@@ -113,6 +113,8 @@ async function bootstrap() {
   fastify.post('/daytotalminutes', { onRequest: [fastify.authenticate] }, getDayTotalMinutes)
   // @ts-ignore
   fastify.get('/monthtotalminutes', { onRequest: [fastify.authenticate] }, getMonthTotalMinutes)
+  // @ts-ignore
+  fastify.get('/tasktotalminutes:id', { onRequest: [fastify.authenticate] }, getTaskTotalMinutes)
   // @ts-ignore
   fastify.get('/collaborators', { onRequest: [fastify.authenticate] }, getAllCollaborators)
   // @ts-ignore
