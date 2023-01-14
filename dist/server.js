@@ -121,7 +121,7 @@ async function bootstrap() {
     // @ts-ignore
     fastify.get('/monthtotalminutes', { onRequest: [fastify.authenticate] }, timeController_1.getMonthTotalMinutes);
     // @ts-ignore
-    fastify.get('/tasktotalminutes:id', { onRequest: [fastify.authenticate] }, timeController_1.getTaskTotalMinutes);
+    fastify.get('/tasktotalminutes/:id', { onRequest: [fastify.authenticate] }, timeController_1.getTaskTotalMinutes);
     // @ts-ignore
     fastify.get('/collaborators', { onRequest: [fastify.authenticate] }, collaboratorsController_1.getAllCollaborators);
     // @ts-ignore

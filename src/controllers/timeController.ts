@@ -9,7 +9,7 @@ const prisma = new PrismaClient({
 
 
 export async function getTaskTotalMinutes(request: any, reply: any) {
-  const taskId = request.params.taskId;
+  const taskId = request.params.id;
   try {
     const timetrackers = await prisma.timeTracker.findMany({ where: { taskId } });
     if (!timetrackers) {

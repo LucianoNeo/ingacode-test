@@ -7,7 +7,7 @@ const prisma = new client_1.PrismaClient({
 // log: ['query']
 });
 async function getTaskTotalMinutes(request, reply) {
-    const taskId = request.params.taskId;
+    const taskId = request.params.id;
     try {
         const timetrackers = await prisma.timeTracker.findMany({ where: { taskId } });
         if (!timetrackers) {
