@@ -5,14 +5,20 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient({
 // log: ['query']
 });
-async function getAllCollaborators() {
-    return await prisma.collaborators.findMany({
-        select: {
-            id: true,
-            name: true,
-            userId: true
-        }
-    });
+async function getAllCollaborators(request, reply) {
+    try {
+        const response = await prisma.collaborators.findMany({
+            select: {
+                id: true,
+                name: true,
+                userId: true
+            }
+        });
+        reply.status(200).send(response);
+    }
+    catch (error) {
+        reply.status(500).send({ error: error.message });
+    }
 }
 exports.getAllCollaborators = getAllCollaborators;
 async function getCollaboratorById(request, reply) {
@@ -26,7 +32,7 @@ async function getCollaboratorById(request, reply) {
         if (!collab) {
             reply.status(404).send({ error: "Colaborador não encontrado!" });
         }
-        reply.status(201).send(collab);
+        reply.status(200).send(collab);
     }
     catch (error) {
         reply.status(500).send({ error: error.message });

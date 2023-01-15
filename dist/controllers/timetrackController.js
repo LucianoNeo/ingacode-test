@@ -9,74 +9,85 @@ const moment_timezone_1 = __importDefault(require("moment-timezone"));
 const prisma = new client_1.PrismaClient({
 // log: ['query']
 });
-async function getAllTimeTrackers() {
-    return await prisma.timeTracker.findMany({
-        select: {
-            id: true,
-            startDate: true,
-            endDate: true,
-            taskId: true,
-            collaboratorId: true
-        },
-        orderBy: {
-            startDate: 'asc'
-        }
-    });
+async function getAllTimeTrackers(request, reply) {
+    try {
+        const response = await prisma.timeTracker.findMany({
+            select: {
+                id: true,
+                startDate: true,
+                endDate: true,
+                taskId: true,
+                collaboratorId: true
+            },
+            orderBy: {
+                startDate: 'asc'
+            }
+        });
+        reply.status(200).send(response);
+    }
+    catch (error) {
+        reply.status(500).send({ error: error.message });
+    }
 }
 exports.getAllTimeTrackers = getAllTimeTrackers;
 async function createTimeTracker(request, reply) {
-    const { startDate, endDate, taskId, collaboratorId } = request.body;
-    const overlappingTimetrackers = await prisma.timeTracker.findMany({
-        where: {
-            AND: [
-                { startDate: { gte: startDate } },
-                { endDate: { lte: endDate } },
-            ],
-        },
-    });
-    if (endDate && (0, moment_timezone_1.default)(startDate).isAfter(endDate)) {
-        return reply.status(400).send({ error: 'O horário de término deve ser MAIOR que o de início!' });
-    }
-    else if (startDate && endDate && overlappingTimetrackers.length > 0) {
-        return reply.status(400).send({ error: 'Já existe um timetracker para este intervalo de tempo' });
-    }
-    else {
-        const timeZoneId = moment_timezone_1.default.tz.guess();
-        if (collaboratorId) {
-            const timetracker = await prisma.timeTracker.create({
-                data: {
-                    startDate,
-                    endDate,
-                    timeZoneId,
-                    collaborator: {
-                        connect: {
-                            id: collaboratorId
-                        }
-                    },
-                    task: {
-                        connect: {
-                            id: taskId
-                        }
-                    }
-                },
-            });
-            reply.status(201).send(timetracker);
+    try {
+        const { startDate, endDate, taskId, collaboratorId } = request.body;
+        const overlappingTimetrackers = await prisma.timeTracker.findMany({
+            where: {
+                AND: [
+                    { startDate: { gte: startDate } },
+                    { endDate: { lte: endDate } },
+                ],
+            },
+        });
+        if (endDate && (0, moment_timezone_1.default)(startDate).isAfter(endDate)) {
+            return reply.status(400).send({ error: 'O horário de término deve ser MAIOR que o de início!' });
+        }
+        else if (startDate && endDate && overlappingTimetrackers.length > 0) {
+            return reply.status(400).send({ error: 'Já existe um timetracker para este intervalo de tempo' });
         }
         else {
-            const timetracker = await prisma.timeTracker.create({
-                data: {
-                    startDate,
-                    endDate,
-                    timeZoneId,
-                    task: {
-                        connect: {
-                            id: taskId
+            const timeZoneId = moment_timezone_1.default.tz.guess();
+            if (collaboratorId) {
+                const timetracker = await prisma.timeTracker.create({
+                    data: {
+                        startDate,
+                        endDate,
+                        timeZoneId,
+                        collaborator: {
+                            connect: {
+                                id: collaboratorId
+                            }
+                        },
+                        task: {
+                            connect: {
+                                id: taskId
+                            }
                         }
-                    }
-                },
-            });
-            reply.status(201).send(timetracker);
+                    },
+                });
+                reply.status(201).send(timetracker);
+            }
+            else {
+                const timetracker = await prisma.timeTracker.create({
+                    data: {
+                        startDate,
+                        endDate,
+                        timeZoneId,
+                        task: {
+                            connect: {
+                                id: taskId
+                            }
+                        }
+                    },
+                });
+                reply.status(201).send(timetracker);
+            }
         }
+    }
+    catch (error) {
+        reply.status(500).send({ error: error.message });
     }
 }
 exports.createTimeTracker = createTimeTracker;
@@ -96,7 +107,7 @@ async function deleteTT(request, reply) {
                 id
             }
         });
-        reply.status(201).send({ message: 'TT deletado com sucesso' });
+        reply.status(200).send({ message: 'TT deletado com sucesso' });
     }
     catch (error) {
         reply.status(500).send({ error: error.message });
@@ -170,7 +181,7 @@ async function getTimeTrackerById(request, reply) {
             reply.status(404).send({ error: 'TimeTracker não encontrado' });
         }
         else {
-            reply.send(timeTracker);
+            reply.status(200).send(timeTracker);
         }
     }
     catch (error) {

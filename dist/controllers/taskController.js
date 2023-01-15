@@ -90,7 +90,7 @@ async function getTaskById(request, reply) {
             reply.status(404).send({ error: 'Task não encontrada' });
         }
         else {
-            reply.send(task);
+            reply.status(200).send(task);
         }
     }
     catch (error) {
@@ -195,7 +195,7 @@ async function createTask(request, reply) {
                     });
                 }
             }
-            reply.status(201).send(task);
+            reply.status(200).send(task);
         }
     }
     catch (error) {
@@ -219,7 +219,7 @@ async function deleteTask(request, reply) {
                 id: taskId
             }
         });
-        reply.status(201).send({ message: 'Task deletada com sucesso' });
+        reply.status(200).send({ message: 'Task deletada com sucesso' });
     }
     catch (error) {
         reply.status(500).send({ error: error.message });

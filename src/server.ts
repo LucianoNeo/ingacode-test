@@ -41,7 +41,7 @@ async function bootstrap() {
       }
     });
     if (!user) {
-      reply.status(401).send({ error: 'Usuário ou Senha inválida' });
+      reply.status(400).send({ error: 'Usuário ou Senha inválida' });
       return
     }
     const isValidPassword = await bcrypt.compare(password, user.password);
@@ -51,7 +51,7 @@ async function bootstrap() {
 
       reply.send({ token, username });
     } else {
-      reply.status(401).send({ error: 'Usuário ou Senha inválida' });
+      reply.status(400).send({ error: 'Usuário ou Senha inválida' });
     }
   }
   )
@@ -59,8 +59,8 @@ async function bootstrap() {
   fastify.decorate('authenticate', async (request: any, reply: any) => {
     try {
       await request.jwtVerify()
-    } catch (error) {
-      reply.send(error)
+    } catch (error: any) {
+      reply.status(401).send({ error: error.message });
     }
   })
 
@@ -69,7 +69,11 @@ async function bootstrap() {
       /* @ts-ignore */
       onRequest: [fastify.authenticate]
     }, async (request: any, reply: any) => {
-      return request.user
+      try {
+        reply.status(200).send(request.user)
+      } catch (error: any) {
+        reply.status(401).send(error.message);
+      }
     })
 
 
@@ -132,5 +136,4 @@ bootstrap()
 checkUsers()
 setTimeout(() => {
   checkCollaborators()
-  console.log(moment().format());
 }, 5000);

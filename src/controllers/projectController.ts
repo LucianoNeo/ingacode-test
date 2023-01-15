@@ -5,13 +5,18 @@ const prisma = new PrismaClient({
 })
 
 export async function createProject(request: any, reply: any) {
-  const { name }: any = request.body;
-  const project = await prisma.projects.create({
-    data: {
-      name,
-    }
-  })
-  reply.status(201).send(project);
+  try {
+
+    const { name }: any = request.body;
+    const project = await prisma.projects.create({
+      data: {
+        name,
+      }
+    })
+    reply.status(201).send(project);
+  } catch (error: any) {
+    reply.status(500).send({ error: error.message });
+  }
 }
 
 
@@ -31,35 +36,41 @@ export async function deleteProject(request: any, reply: any) {
         id: projectId
       }
     })
-    reply.status(201).send({ message: 'Projeto deletado com sucesso' });
+    reply.status(200).send({ message: 'Projeto deletado com sucesso' });
 
   } catch (error: any) {
     reply.status(500).send({ error: error.message });
   }
 }
 
-export async function getAllProjects() {
-  return await prisma.projects.findMany({
-    include: {
-      Tasks: {
-        select: {
-          name: true,
-          id: true,
-          TimeTracker: {
-            select: {
-              startDate: true,
-              endDate: true,
-              collaborator: {
-                select: {
-                  name: true
+export async function getAllProjects(request: any, reply: any) {
+  try {
+    const response = await prisma.projects.findMany({
+      include: {
+        Tasks: {
+          select: {
+            name: true,
+            id: true,
+            TimeTracker: {
+              select: {
+                startDate: true,
+                endDate: true,
+                collaborator: {
+                  select: {
+                    name: true
+                  }
                 }
               }
             }
           }
         }
       }
-    }
-  })
+    })
+    reply.status(200).send(response);
+  } catch (error: any) {
+    reply.status(500).send({ error: error.message });
+  }
+
 }
 
 export async function getProjectById(request: any, reply: any) {
@@ -73,7 +84,7 @@ export async function getProjectById(request: any, reply: any) {
     if (!project) {
       reply.status(404).send({ error: "Projeto não encontrado!" })
     }
-    reply.status(201).send(project);
+    reply.status(200).send(project);
 
   } catch (error: any) {
     reply.status(500).send({ error: error.message });
@@ -100,7 +111,7 @@ export async function modifyProject(request: any, reply: any) {
         name
       }
     })
-    reply.status(201).send(projectUpdated)
+    reply.status(200).send(projectUpdated)
 
   } catch (error: any) {
     reply.status(500).send({ error: error.message });

@@ -59,7 +59,7 @@ async function bootstrap() {
             }
         });
         if (!user) {
-            reply.status(401).send({ error: 'Usuário ou Senha inválida' });
+            reply.status(400).send({ error: 'Usuário ou Senha inválida' });
             return;
         }
         const isValidPassword = await bcrypt.compare(password, user.password);
@@ -69,7 +69,7 @@ async function bootstrap() {
             reply.send({ token, username });
         }
         else {
-            reply.status(401).send({ error: 'Usuário ou Senha inválida' });
+            reply.status(400).send({ error: 'Usuário ou Senha inválida' });
         }
     });
     fastify.decorate('authenticate', async (request, reply) => {
@@ -77,14 +77,19 @@ async function bootstrap() {
             await request.jwtVerify();
         }
         catch (error) {
-            reply.send(error);
+            reply.status(401).send({ error: error.message });
         }
     });
     fastify.get('/validatetoken', {
         /* @ts-ignore */
         onRequest: [fastify.authenticate]
     }, async (request, reply) => {
-        return request.user;
+        try {
+            reply.status(200).send(request.user);
+        }
+        catch (error) {
+            reply.status(401).send(error.message);
+        }
     });
     /* @ts-ignore */
     fastify.get('/projects', { onRequest: [fastify.authenticate] }, projectController_1.getAllProjects);
@@ -132,5 +137,4 @@ bootstrap();
 (0, userController_1.checkUsers)();
 setTimeout(() => {
     (0, userController_1.checkCollaborators)();
-    console.log(moment().format());
 }, 5000);

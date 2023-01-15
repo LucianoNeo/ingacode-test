@@ -85,7 +85,7 @@ export async function getTaskById(request: any, reply: any) {
     if (!task) {
       reply.status(404).send({ error: 'Task não encontrada' });
     } else {
-      reply.send(task);
+      reply.status(200).send(task);
     }
   } catch (error: any) {
     reply.status(500).send({ error: error.message });
@@ -195,7 +195,7 @@ export async function createTask(request: any, reply: any) {
         }
 
       }
-      reply.status(201).send(task);
+      reply.status(200).send(task);
     }
   } catch (error: any) {
     reply.status(500).send({ error: error.message });
@@ -218,7 +218,7 @@ export async function deleteTask(request: any, reply: any) {
         id: taskId
       }
     })
-    reply.status(201).send({ message: 'Task deletada com sucesso' });
+    reply.status(200).send({ message: 'Task deletada com sucesso' });
 
   } catch (error: any) {
     reply.status(500).send({ error: error.message });

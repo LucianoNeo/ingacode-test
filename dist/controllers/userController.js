@@ -43,11 +43,11 @@ exports.createUser = createUser;
 async function checkUsers() {
     const users = await prisma.users.findMany();
     if (users.length == 0) {
-        createUser('luciano', process.env.USER_PASSWORD);
+        createUser('Luciano', process.env.USER_PASSWORD);
         console.log('Criando usuario: luciano');
-        createUser('henrique', process.env.USER_PASSWORD);
+        createUser('Henrique', process.env.USER_PASSWORD);
         console.log('Criando usuario: henrique');
-        createUser('erica', process.env.USER_PASSWORD);
+        createUser('Erica', process.env.USER_PASSWORD);
         console.log('Criando usuario: erica');
     }
     else {

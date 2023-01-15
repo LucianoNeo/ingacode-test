@@ -6,13 +6,18 @@ const prisma = new client_1.PrismaClient({
 // log: ['query']
 });
 async function createProject(request, reply) {
-    const { name } = request.body;
-    const project = await prisma.projects.create({
-        data: {
-            name,
-        }
-    });
-    reply.status(201).send(project);
+    try {
+        const { name } = request.body;
+        const project = await prisma.projects.create({
+            data: {
+                name,
+            }
+        });
+        reply.status(201).send(project);
+    }
+    catch (error) {
+        reply.status(500).send({ error: error.message });
+    }
 }
 exports.createProject = createProject;
 async function deleteProject(request, reply) {
@@ -31,35 +36,41 @@ async function deleteProject(request, reply) {
                 id: projectId
             }
         });
-        reply.status(201).send({ message: 'Projeto deletado com sucesso' });
+        reply.status(200).send({ message: 'Projeto deletado com sucesso' });
     }
     catch (error) {
         reply.status(500).send({ error: error.message });
     }
 }
 exports.deleteProject = deleteProject;
-async function getAllProjects() {
-    return await prisma.projects.findMany({
-        include: {
-            Tasks: {
-                select: {
-                    name: true,
-                    id: true,
-                    TimeTracker: {
-                        select: {
-                            startDate: true,
-                            endDate: true,
-                            collaborator: {
-                                select: {
-                                    name: true
+async function getAllProjects(request, reply) {
+    try {
+        const response = await prisma.projects.findMany({
+            include: {
+                Tasks: {
+                    select: {
+                        name: true,
+                        id: true,
+                        TimeTracker: {
+                            select: {
+                                startDate: true,
+                                endDate: true,
+                                collaborator: {
+                                    select: {
+                                        name: true
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+        reply.status(200).send(response);
+    }
+    catch (error) {
+        reply.status(500).send({ error: error.message });
+    }
 }
 exports.getAllProjects = getAllProjects;
 async function getProjectById(request, reply) {
@@ -73,7 +84,7 @@ async function getProjectById(request, reply) {
         if (!project) {
             reply.status(404).send({ error: "Projeto não encontrado!" });
         }
-        reply.status(201).send(project);
+        reply.status(200).send(project);
     }
     catch (error) {
         reply.status(500).send({ error: error.message });
@@ -100,7 +111,7 @@ async function modifyProject(request, reply) {
                 name
             }
         });
-        reply.status(201).send(projectUpdated);
+        reply.status(200).send(projectUpdated);
     }
     catch (error) {
         reply.status(500).send({ error: error.message });

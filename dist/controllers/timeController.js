@@ -24,7 +24,7 @@ async function getTaskTotalMinutes(request, reply) {
         }
     }
     catch (error) {
-        reply.status(401).send(error);
+        reply.status(500).send({ error: error.message });
     }
 }
 exports.getTaskTotalMinutes = getTaskTotalMinutes;
@@ -60,11 +60,8 @@ async function getDayTotalMinutes(request, reply) {
                 const endDate = count.endDate;
                 totalMinutes += (0, date_fns_1.differenceInMinutes)(Number(endDate), Number(startDate));
             }
-            console.log(totalMinutes);
             totalHours = Math.floor(totalMinutes / 60);
             totalMinutes = Math.floor(totalMinutes %= 60);
-            console.log(totalHours);
-            console.log(totalMinutes);
             if (totalHours <= 9) {
                 /* @ts-ignore */
                 totalHours = String('0' + totalHours);
@@ -73,11 +70,11 @@ async function getDayTotalMinutes(request, reply) {
                 /* @ts-ignore */
                 totalMinutes = String('0' + totalMinutes);
             }
-            reply.status(201).send(`${totalHours}:${totalMinutes}`);
+            reply.status(200).send(`${totalHours}:${totalMinutes}`);
         }
     }
     catch (error) {
-        return error;
+        reply.status(500).send({ error: error.message });
     }
 }
 exports.getDayTotalMinutes = getDayTotalMinutes;
@@ -121,11 +118,11 @@ async function getMonthTotalMinutes(request, reply) {
                 /* @ts-ignore */
                 totalMinutes = String('0' + totalMinutes);
             }
-            reply.status(201).send(`${totalHours}:${totalMinutes}`);
+            reply.status(200).send(`${totalHours}:${totalMinutes}`);
         }
     }
     catch (error) {
-        return error;
+        reply.status(500).send({ error: error.message });
     }
 }
 exports.getMonthTotalMinutes = getMonthTotalMinutes;

@@ -5,76 +5,87 @@ const prisma = new PrismaClient({
   // log: ['query']
 })
 
-export async function getAllTimeTrackers() {
-  return await prisma.timeTracker.findMany({
-    select: {
-      id: true,
-      startDate: true,
-      endDate: true,
-      taskId: true,
-      collaboratorId: true
-    },
-    orderBy: {
-      startDate: 'asc'
-    }
-  })
+export async function getAllTimeTrackers(request: any, reply: any) {
+  try {
+    const response = await prisma.timeTracker.findMany({
+      select: {
+        id: true,
+        startDate: true,
+        endDate: true,
+        taskId: true,
+        collaboratorId: true
+      },
+      orderBy: {
+        startDate: 'asc'
+      }
+    })
+    reply.status(200).send(response)
+  } catch (error: any) {
+    reply.status(500).send({ error: error.message });
+  }
+
 }
 
 export async function createTimeTracker(request: any, reply: any) {
-  const { startDate, endDate, taskId, collaboratorId }: any = request.body;
-  const overlappingTimetrackers = await prisma.timeTracker.findMany({
-    where: {
-      AND: [
-        { startDate: { gte: startDate } },
-        { endDate: { lte: endDate } },
-      ],
-    },
-  });
-  if (endDate && moment(startDate).isAfter(endDate)) {
-    return reply.status(400).send({ error: 'O horário de término deve ser MAIOR que o de início!' });
-  }
-  else if (startDate && endDate && overlappingTimetrackers.length > 0) {
-    return reply.status(400).send({ error: 'Já existe um timetracker para este intervalo de tempo' });
-  } else {
-    const timeZoneId = moment.tz.guess();
-    if (collaboratorId) {
-      const timetracker = await prisma.timeTracker.create({
-        data: {
-          startDate,
-          endDate,
-          timeZoneId,
-          collaborator: {
-            connect: {
-              id: collaboratorId
+  try {
+    const { startDate, endDate, taskId, collaboratorId }: any = request.body;
+    const overlappingTimetrackers = await prisma.timeTracker.findMany({
+      where: {
+        AND: [
+          { startDate: { gte: startDate } },
+          { endDate: { lte: endDate } },
+        ],
+      },
+    });
+    if (endDate && moment(startDate).isAfter(endDate)) {
+      return reply.status(400).send({ error: 'O horário de término deve ser MAIOR que o de início!' });
+    }
+    else if (startDate && endDate && overlappingTimetrackers.length > 0) {
+      return reply.status(400).send({ error: 'Já existe um timetracker para este intervalo de tempo' });
+    } else {
+      const timeZoneId = moment.tz.guess();
+      if (collaboratorId) {
+        const timetracker = await prisma.timeTracker.create({
+          data: {
+            startDate,
+            endDate,
+            timeZoneId,
+            collaborator: {
+              connect: {
+                id: collaboratorId
+              }
+            },
+            task: {
+              connect: {
+                id: taskId
+              }
+            }
+
+          },
+
+        });
+        reply.status(201).send(timetracker);
+      } else {
+        const timetracker = await prisma.timeTracker.create({
+          data: {
+            startDate,
+            endDate,
+            timeZoneId,
+            task: {
+              connect: {
+                id: taskId
+              }
             }
           },
-          task: {
-            connect: {
-              id: taskId
-            }
-          }
 
-        },
-
-      });
-      reply.status(201).send(timetracker);
-    } else {
-      const timetracker = await prisma.timeTracker.create({
-        data: {
-          startDate,
-          endDate,
-          timeZoneId,
-          task: {
-            connect: {
-              id: taskId
-            }
-          }
-        },
-
-      });
-      reply.status(201).send(timetracker);
+        });
+        reply.status(201).send(timetracker);
+      }
     }
+  } catch (error: any) {
+    reply.status(500).send({ error: error.message });
   }
+
 }
 
 export async function deleteTT(request: any, reply: any) {
@@ -93,7 +104,7 @@ export async function deleteTT(request: any, reply: any) {
         id
       }
     })
-    reply.status(201).send({ message: 'TT deletado com sucesso' });
+    reply.status(200).send({ message: 'TT deletado com sucesso' });
 
   } catch (error: any) {
     reply.status(500).send({ error: error.message });
@@ -166,7 +177,7 @@ export async function getTimeTrackerById(request: any, reply: any) {
     if (!timeTracker) {
       reply.status(404).send({ error: 'TimeTracker não encontrado' });
     } else {
-      reply.send(timeTracker);
+      reply.status(200).send(timeTracker);
     }
   } catch (error: any) {
     reply.status(500).send({ error: error.message });
