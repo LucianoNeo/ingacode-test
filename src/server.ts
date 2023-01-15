@@ -22,7 +22,7 @@ const fastify = Fastify({
 
 const jwt = require('fastify-jwt');
 
-fastify.register(jwt, { secret: 'my-secret' });
+fastify.register(jwt, { secret: process.env.JWT_SECRET });
 
 
 async function bootstrap() {
@@ -47,7 +47,7 @@ async function bootstrap() {
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (isValidPassword) {
       /* @ts-ignore */
-      const token = fastify.jwt.sign({ id: user.id, username: user.username }, { expiresIn: '1d' });
+      const token = fastify.jwt.sign({ id: user.id, username: user.username }, { expiresIn: '1m' });
 
       reply.send({ token, username });
     } else {
