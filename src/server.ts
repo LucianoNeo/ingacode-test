@@ -20,7 +20,7 @@ const fastify = Fastify({
   logger: true,
 })
 
-const jwt = require('fastify-jwt');
+const jwt = require('@fastify/jwt');
 
 fastify.register(jwt, { secret: process.env.JWT_SECRET });
 

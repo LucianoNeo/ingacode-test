@@ -44,7 +44,7 @@ const prisma = new client_1.PrismaClient({
 const fastify = (0, fastify_1.default)({
     logger: true,
 });
-const jwt = require('fastify-jwt');
+const jwt = require('@fastify/jwt');
 fastify.register(jwt, { secret: process.env.JWT_SECRET });
 async function bootstrap() {
     await fastify.register(cors_1.default, {
