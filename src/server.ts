@@ -47,7 +47,7 @@ async function bootstrap() {
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (isValidPassword) {
       /* @ts-ignore */
-      const token = fastify.jwt.sign({ id: user.id, username: user.username }, { expiresIn: '1m' });
+      const token = fastify.jwt.sign({ id: user.id, username: user.username }, { expiresIn: '1d' });
 
       reply.send({ token, username });
     } else {
