@@ -99,9 +99,9 @@ export async function createTask(request: any, reply: any) {
   try {
     const overlappingTimetrackers = await prisma.timeTracker.findMany({
       where: {
-        AND: [
-          { startDate: { gte: startDate } },
-          { endDate: { lte: endDate } },
+        OR: [
+          { AND: [{ startDate: { gte: startDate } }, { startDate: { lte: endDate } }] },
+          { AND: [{ endDate: { gte: startDate } }, { endDate: { lte: endDate } }] }
         ],
       },
     });

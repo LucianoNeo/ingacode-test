@@ -6,9 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTimeTrackerById = exports.modifyTimeTracker = exports.deleteTT = exports.createTimeTracker = exports.getAllTimeTrackers = void 0;
 const client_1 = require("@prisma/client");
 const moment_timezone_1 = __importDefault(require("moment-timezone"));
-const prisma = new client_1.PrismaClient({
-// log: ['query']
-});
+const prisma = new client_1.PrismaClient({});
 async function getAllTimeTrackers(request, reply) {
     try {
         const response = await prisma.timeTracker.findMany({
@@ -35,7 +33,10 @@ async function createTimeTracker(request, reply) {
         const { startDate, endDate, taskId, collaboratorId } = request.body;
         const overlappingTimetrackers = await prisma.timeTracker.findMany({
             where: {
-                AND: [{ startDate: { gte: startDate } }, { endDate: { lte: endDate } }],
+                OR: [
+                    { AND: [{ startDate: { gte: startDate } }, { startDate: { lte: endDate } }] },
+                    { AND: [{ endDate: { gte: startDate } }, { endDate: { lte: endDate } }] }
+                ],
             },
         });
         if (endDate && (0, moment_timezone_1.default)(startDate).isAfter(endDate)) {
