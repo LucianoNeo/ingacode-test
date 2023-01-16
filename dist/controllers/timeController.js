@@ -17,7 +17,14 @@ async function getTaskTotalMinutes(request, reply) {
             let totalMinutes = 0;
             for (const count of timetrackers) {
                 const startDate = count.startDate;
-                const endDate = count.endDate;
+                let endDate;
+                if (count.startDate && !count.endDate) {
+                    const now = new Date();
+                    endDate = now;
+                }
+                else {
+                    endDate = count.endDate;
+                }
                 totalMinutes += (0, date_fns_1.differenceInMinutes)(Number(endDate), Number(startDate));
             }
             reply.status(200).send(totalMinutes);

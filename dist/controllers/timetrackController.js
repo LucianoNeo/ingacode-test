@@ -35,10 +35,7 @@ async function createTimeTracker(request, reply) {
         const { startDate, endDate, taskId, collaboratorId } = request.body;
         const overlappingTimetrackers = await prisma.timeTracker.findMany({
             where: {
-                AND: [
-                    { startDate: { gte: startDate } },
-                    { endDate: { lte: endDate } },
-                ],
+                AND: [{ startDate: { gte: startDate } }, { endDate: { lte: endDate } }],
             },
         });
         if (endDate && (0, moment_timezone_1.default)(startDate).isAfter(endDate)) {
